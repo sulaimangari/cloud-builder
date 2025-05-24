@@ -1,0 +1,39 @@
+name: ssh
+on: workflow_dispatch
+
+jobs:
+  ssh:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: dependency
+      run: |
+        URL="https://api.github.com/repos/ekzhang/bore/releases/latest"
+        curl -s $URL | awk -F\" '/browser_download_url.*x86_64-unknown-linux-musl.tar.gz/{system("curl -OL " $(NF-1))}'
+        tar -xvf *.tar.gz
+        sudo cp bore /usr/bin/bore
+        exec bash
+    - name: install fastfetch
+      run: |
+        URL2="https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest"
+        curl -s $URL2 | awk -F\" '/browser_download_url.*-amd64.deb/{system("curl -OL " $(NF-1))}'
+        sudo apt install ./fastfetch-linux-amd64.deb
+
+    - name: check status
+      run: |
+        whoami
+
+    - name: transfer key
+      env: 
+        AUTHORIZED_KEY : ${{ secrets.AUTHORIZED_KEY }}
+      run: |
+        mkdir ~/.ssh
+        chmod 700 ~/.ssh
+        echo $AUTHORIZED_KEY | base64 -d >> ~/.ssh/authorized_keys
+        chmod 600 ~/.ssh/authorized_keys
+
+    - name: run tunnel
+      env:
+        SERVER_IP : ${{ secrets.SERVER_IP }}
+      run: 'bore local 22 --to $SERVER_IP'
+        
