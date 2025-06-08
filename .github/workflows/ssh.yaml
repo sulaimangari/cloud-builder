@@ -25,7 +25,7 @@ jobs:
 
     - name: transfer key
       env: 
-        AUTHORIZED_KEY : ${{ secrets.AUTHORIZED_KEY }}
+        AUTHORIZED_KEY : ${{ secrets.AUTHORIZED_KEY2 }}
       run: |
         mkdir ~/.ssh
         chmod 700 ~/.ssh
