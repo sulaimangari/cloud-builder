@@ -35,5 +35,5 @@ jobs:
     - name: run tunnel
       env:
         SERVER_IP : ${{ secrets.SERVER_IP }}
-      run: 'bore local 22 --to $SERVER_IP --port 2828' 
+      run: 'bore local 22 --to $SERVER_IP' 
         
